@@ -13,14 +13,15 @@ return new class extends Migration
     {
         Schema::create('flight_routes', function (Blueprint $table) {
             $table->id();
-            $table->string('methodology');
-            $table->unsignedInteger('number_of_travelers');
-            $table->string('origin');
-            $table->string('destination');
+            $table->string('methodology', 20)->nullable();
+            $table->string('origin', 3);
+            $table->string('destination', 3);
             $table->unsignedBigInteger('emission_id');
 
             $table->foreign('emission_id')->references('id')->on('emissions')->onDelete('cascade');
             $table->timestamps();
+
+            $table->unique(['methodology', 'origin', 'destination']);
         });
     }
 

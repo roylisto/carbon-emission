@@ -12,7 +12,6 @@ class Emission extends Model
     protected $fillable = [
         'carbon_quantity',
         'carbon_unit',
-        'external_reference',
         'type',
         'methodology',
         'distance',

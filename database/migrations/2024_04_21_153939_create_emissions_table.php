@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('carbon_quantity');
             $table->string('carbon_unit');
-            $table->string('external_reference')->nullable();
             $table->string('type');
             $table->string('methodology');
             $table->float('distance');

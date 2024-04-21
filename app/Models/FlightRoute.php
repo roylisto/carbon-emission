@@ -11,7 +11,6 @@ class FlightRoute extends Model
 
     protected $fillable = [
         'methodology',
-        'number_of_travelers',
         'origin',
         'destination',
         'emission_id',
