@@ -8,16 +8,20 @@ use Illuminate\Http\Request;
 use App\Models\FlightRoute;
 
 use App\Http\Resources\FlightRouteResource;
+use App\Services\Squake;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 
 class FlightRouteController extends Controller
 {
+    protected $squake;
+
+    public function __construct(Squake $squake)
+    {
+        $this->squake = $squake;
+    }
     public function calculate(Request $request)
     {
-        $squakeToken = env('SQUAKE_TOKEN');
-        $squakeUrl = env('SQUAKE_URL');
-
         $validator = Validator::make($request->all(), [
             'origin' => 'required|string|max:3',
             'destination' => 'required|string|max:3',
@@ -30,10 +34,7 @@ class FlightRouteController extends Controller
         $origin = $request->input('origin');
         $destination = $request->input('destination');
 
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $squakeToken,
-            'Content-Type' => 'application/json',
-        ])->post($squakeUrl, [
+        $response = $this->squake->calculate([
             'expand' => ['items'],
             'items' => [
                 [
@@ -41,7 +42,7 @@ class FlightRouteController extends Controller
                     'methodology' => 'ademe',
                     'number_of_travelers' => 1,
                     'origin' => $origin,
-                    'destination' => $destination
+                    'destination' => $destination,
                 ]
             ],
         ]);
