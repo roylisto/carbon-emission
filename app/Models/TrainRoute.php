@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class FlightRoute extends Model
+class TrainRoute extends Model
 {
     use HasFactory;
 
@@ -13,22 +13,25 @@ class FlightRoute extends Model
         'methodology',
         'origin',
         'destination',
+        'train_type',
         'emission_id',
     ];
 
     /**
-     * Find flight routes based on origin, destination and methodology
+     * Find train routes based on origin, destination, methodology, train_type
      *
      * @param string $origin
      * @param string $destination
      * @param string $methdology
+     * @param string $train_type
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public static function findBy($origin, $destination, $methodology)
+    public static function findBy($origin, $destination, $methodology, $train_type)
     {
         $query = self::where('origin', strtoupper($origin))
             ->where('destination', strtoupper($destination))
             ->where('methodology', strtoupper($methodology))
+            ->where('train_type', strtoupper($train_type))
             ->with('emission');
 
         return $query->with('emission')->first();

@@ -3,15 +3,15 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\TrainRoute;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Services\Squake;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\ResponseResource;
 use App\Models\Emission;
-use App\Models\FlightRoute;
-use App\Services\Squake;
+use Illuminate\Support\Facades\DB;
 
-class FlightRouteController extends Controller
+class TrainRouteController extends Controller
 {
     protected $squake;
 
@@ -25,9 +25,11 @@ class FlightRouteController extends Controller
         $input = $request->all();
 
         $validator = Validator::make($input, [
-            '*.origin' => 'required|string|size:3',
-            '*.destination' => 'required|string|size:3',
-            '*.number_of_travelers' => 'required|integer|min:1'
+            '*.origin' => 'required|string',
+            '*.destination' => 'required|string',
+            '*.number_of_travelers' => 'required|integer|min:1',
+            '*.methodology' => 'required|string',
+            '*.train_type' => 'required|string',
         ]);
 
         if ($validator->fails()) {
@@ -40,13 +42,14 @@ class FlightRouteController extends Controller
 
         // Prepare data for DB and Squake calls in one loop
         foreach ($input as $key => $item) {
-            $item['type'] = 'flight';
+            $item['type'] = 'train';
             $dataToCheck[$key] = $item;
 
-            $routeEmission = FlightRoute::findBy(
+            $routeEmission = TrainRoute::findBy(
                 $item['origin'],
                 $item['destination'],
-                isset($item['methodology']) ? $item['methodology'] : 'MYCLIMATE'
+                isset($item['methodology']) ? $item['methodology'] : 'BASIC',
+                $item['train_type']
             );
 
             if (!empty($routeEmission)) {
@@ -66,7 +69,7 @@ class FlightRouteController extends Controller
             ]);
 
             if (isset($squakeResponse['errors'])) {
-                return new ResponseResource(false, 'Flight Emission Calculation ', $squakeResponse['errors']);
+                return new ResponseResource(false, 'Train Emission Calculation ', $squakeResponse['errors']);
             }
 
             // Process Squake response and save data
@@ -77,14 +80,15 @@ class FlightRouteController extends Controller
                     $item['carbon_quantity'] = (int) ($item['carbon_quantity'] / $check['number_of_travelers']);
 
                     $emission = Emission::create($item);
-                    $insertData = FlightRoute::create([
+                    $insertData = TrainRoute::create([
                         'origin' => strtoupper($check['origin']),
                         'destination' => strtoupper($check['destination']),
-                        'methodology' => isset($check['methodology']) ? strtoupper($check['methodology']) : 'MYCLIMATE',
+                        'methodology' => isset($check['methodology']) ? strtoupper($check['methodology']) : 'BASIC',
+                        'train_type' => strtoupper($check['train_type']),
                         'emission_id' => $emission->id,
                     ])->load('emission');
 
-                    $newRouteEmission = FlightRoute::with('emission')->find($insertData->id);
+                    $newRouteEmission = TrainRoute::with('emission')->find($insertData->id);
                     $newRouteEmission['emission']['carbon_quantity'] = $newRouteEmission['emission']['carbon_quantity'] * $check['number_of_travelers'];
                     $totalCarbonQuantity += $newRouteEmission['emission']['carbon_quantity'];
                     $outputItems[] = $newRouteEmission;
@@ -92,7 +96,7 @@ class FlightRouteController extends Controller
                 DB::commit();
             } catch (\Exception $e) {
                 DB::rollBack();
-                return new ResponseResource(false, 'Flight Emission Calculation', $e->getMessage());
+                return new ResponseResource(false, 'Train Emission Calculation', $e->getMessage());
             }
         }
 
@@ -102,6 +106,6 @@ class FlightRouteController extends Controller
             "items" => $outputItems
         ];
 
-        return new ResponseResource(true, 'Flight Emission Calculation ', $outputResponse);
+        return new ResponseResource(true, 'Train Emission Calculation ', $outputResponse);
     }
 }
