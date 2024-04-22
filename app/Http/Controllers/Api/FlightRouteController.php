@@ -43,12 +43,13 @@ class FlightRouteController extends Controller
             $routeEmission = FlightRoute::findByOriginDestinationMethodology(
                 $item['origin'],
                 $item['destination'],
-                isset($item['methodology']) ? $item['methodology'] : null
+                isset($item['methodology']) ? $item['methodology'] : 'MYCLIMATE'
             );
 
             if (empty($routeEmission)) {
                 array_push($checkOnSquake, $item);
             } else {
+                $routeEmission['emission']['carbon_quantity'] = $routeEmission['emission']['carbon_quantity'] * $item['number_of_travelers'];
                 array_push($outputItems, $routeEmission);
             }
         }
@@ -77,14 +78,15 @@ class FlightRouteController extends Controller
 
                     // store to flight route
                     $insertData = FlightRoute::create([
-                        'origin' => $check['origin'],
-                        'destination' => $check['destination'],
-                        'methodology' => $check['methodology'] ?? null,
+                        'origin' => strtoupper($check['origin']),
+                        'destination' => strtoupper($check['destination']),
+                        'methodology' => isset($check['methodology']) ? strtoupper($check['methodology']) : 'MYCLIMATE',
                         'emission_id' => $emission->id,
                     ])->load('emission');
                     DB::commit();
 
                     $newRouteEmission = FlightRoute::with('emission')->find($insertData->id);
+                    $newRouteEmission['emission']['carbon_quantity'] = $newRouteEmission['emission']['carbon_quantity'] * $check['number_of_travelers'];
                     array_push($outputItems, $newRouteEmission);
                 } catch (\Exception $e) {
                     DB::rollBack();

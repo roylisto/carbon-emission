@@ -24,11 +24,11 @@ class FlightRoute extends Model
      * @param string $methdology
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public static function findByOriginDestinationMethodology($origin, $destination, $methodology = null)
+    public static function findByOriginDestinationMethodology($origin, $destination, $methodology)
     {
-        $query = self::where('origin', $origin)
-            ->where('destination', $destination)
-            ->where('methodology', $methodology)
+        $query = self::where('origin', strtoupper($origin))
+            ->where('destination', strtoupper($destination))
+            ->where('methodology', strtoupper($methodology))
             ->with('emission');
 
         return $query->with('emission')->first();
