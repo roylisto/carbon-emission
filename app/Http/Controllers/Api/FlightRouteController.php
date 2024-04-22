@@ -10,6 +10,7 @@ use App\Models\Emission;
 use App\Models\FlightRoute;
 use App\Services\Squake;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class FlightRouteController extends Controller
 {
@@ -19,11 +20,12 @@ class FlightRouteController extends Controller
     {
         $this->squake = $squake;
     }
+
     public function calculate(Request $request)
     {
-        $items = $request->all();
+        $input = $request->all();
 
-        $validator = Validator::make($items, [
+        $validator = Validator::make($input, [
             '*.origin' => 'required|string|max:3',
             '*.destination' => 'required|string|max:3',
         ]);
@@ -32,33 +34,65 @@ class FlightRouteController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        foreach ($items as &$item) {
+        $outputItems = [];
+        $checkOnSquake = [];
+        foreach ($input as $key => $item) {
             $item['type'] = 'flight';
+
+            // find data in db
+            $routeEmission = FlightRoute::findByOriginDestinationMethodology(
+                $item['origin'],
+                $item['destination'],
+                isset($item['methodology']) ? $item['methodology'] : null
+            );
+
+            if (empty($routeEmission)) {
+                array_push($checkOnSquake, $item);
+            } else {
+                array_push($outputItems, $routeEmission);
+            }
         }
 
-        $squakeResponse = $this->squake->calculate([
-            'expand' => ['items'],
-            'items' => $items
-        ]);
-
-        // save flight route
-        foreach ($items as $key => &$item) {
-
-            $res = $squakeResponse['items'][$key];
-            $res['carbon_quantity'] = (int) ($res['carbon_quantity'] / $item['number_of_travelers']);
-
-            // store to emission table
-            $emission = Emission::create($res);
-
-            // store to flight route
-            FlightRoute::create([
-                'origin' => $item['origin'],
-                'destination' => $item['destination'],
-                'methodology' => $item['methodology'] ?? null,
-                'emission_id' => $emission->id,
+        // if some data not exist in DB then call squake API
+        if (!empty($checkOnSquake)) {
+            $squakeResponse = $this->squake->calculate([
+                'expand' => ['items'],
+                'items' => $checkOnSquake
             ]);
+
+            if (isset($squakeResponse['errors'])) {
+                return new FlightRouteResource(false, 'Flight Emission Calculation ', $squakeResponse['errors']);
+            }
+
+            // save new flight route emission
+            foreach ($squakeResponse['items'] as $key => $item) {
+
+                $check = $checkOnSquake[$key];
+                $item['carbon_quantity'] = (int) ($item['carbon_quantity'] / $check['number_of_travelers']);
+
+                try {
+                    DB::beginTransaction();
+                    // store to emission table
+                    $emission = Emission::create($item);
+
+                    // store to flight route
+                    $insertData = FlightRoute::create([
+                        'origin' => $check['origin'],
+                        'destination' => $check['destination'],
+                        'methodology' => $check['methodology'] ?? null,
+                        'emission_id' => $emission->id,
+                    ])->load('emission');
+                    DB::commit();
+
+                    $newRouteEmission = FlightRoute::with('emission')->find($insertData->id);
+                    array_push($outputItems, $newRouteEmission);
+                } catch (\Exception $e) {
+                    DB::rollBack();
+                    return new FlightRouteResource(false, 'Flight Emission Calculation ', $e->getMessage());
+                }
+            }
         }
 
-        return new FlightRouteResource(true, 'Flight Emission Calculation ', $squakeResponse->json());
+        return new FlightRouteResource(true, 'Flight Emission Calculation ', $outputItems);
     }
 }
