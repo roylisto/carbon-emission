@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
-use App\Http\Resources\FlightRouteResource;
+use App\Http\Resources\ResponseResource;
 use App\Models\Emission;
 use App\Models\FlightRoute;
 use App\Services\Squake;
@@ -66,7 +66,7 @@ class FlightRouteController extends Controller
             ]);
 
             if (isset($squakeResponse['errors'])) {
-                return new FlightRouteResource(false, 'Flight Emission Calculation ', $squakeResponse['errors']);
+                return new ResponseResource(false, 'Flight Emission Calculation ', $squakeResponse['errors']);
             }
 
             // Process Squake response and save data
@@ -92,7 +92,7 @@ class FlightRouteController extends Controller
                 DB::commit();
             } catch (\Exception $e) {
                 DB::rollBack();
-                return new FlightRouteResource(false, 'Flight Emission Calculation', $e->getMessage());
+                return new ResponseResource(false, 'Flight Emission Calculation', $e->getMessage());
             }
         }
 
@@ -102,6 +102,6 @@ class FlightRouteController extends Controller
             "items" => $outputItems
         ];
 
-        return new FlightRouteResource(true, 'Flight Emission Calculation ', $outputResponse);
+        return new ResponseResource(true, 'Flight Emission Calculation ', $outputResponse);
     }
 }

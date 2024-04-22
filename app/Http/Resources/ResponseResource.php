@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class FlightRouteResource extends JsonResource
+class ResponseResource extends JsonResource
 {
 
     public $status;
