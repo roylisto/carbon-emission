@@ -36,6 +36,7 @@ class FlightRouteController extends Controller
 
         $outputItems = [];
         $checkOnSquake = [];
+        $totalCarbonQuantity = 0;
         foreach ($input as $key => $item) {
             $item['type'] = 'flight';
 
@@ -50,6 +51,7 @@ class FlightRouteController extends Controller
                 array_push($checkOnSquake, $item);
             } else {
                 $routeEmission['emission']['carbon_quantity'] = $routeEmission['emission']['carbon_quantity'] * $item['number_of_travelers'];
+                $totalCarbonQuantity += $routeEmission['emission']['carbon_quantity'];
                 array_push($outputItems, $routeEmission);
             }
         }
@@ -87,14 +89,21 @@ class FlightRouteController extends Controller
 
                     $newRouteEmission = FlightRoute::with('emission')->find($insertData->id);
                     $newRouteEmission['emission']['carbon_quantity'] = $newRouteEmission['emission']['carbon_quantity'] * $check['number_of_travelers'];
+                    $totalCarbonQuantity += $newRouteEmission['emission']['carbon_quantity'];
                     array_push($outputItems, $newRouteEmission);
                 } catch (\Exception $e) {
                     DB::rollBack();
-                    return new FlightRouteResource(false, 'Flight Emission Calculation ', $e->getMessage());
+                    return new FlightRouteResource(false, 'Flight Emission Calculation', $e->getMessage());
                 }
             }
         }
 
-        return new FlightRouteResource(true, 'Flight Emission Calculation ', $outputItems);
+        $outputResponse = [
+            "total_carbon_quantity" => $totalCarbonQuantity,
+            "carbon_unit" => "gram",
+            "items" => $outputItems
+        ];
+
+        return new FlightRouteResource(true, 'Flight Emission Calculation ', $outputResponse);
     }
 }
