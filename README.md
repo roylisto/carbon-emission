@@ -12,13 +12,13 @@ Welcome to Carbon Emission Calculation! This README will guide you through setti
 1. Clone this repository to your local machine.
 
     ```bash
-    git clone <repository_url>
+    git clone https://github.com/roylisto/carbon-emission.git
     ```
 
 2. Navigate to the project directory.
 
     ```bash
-    cd <project_directory>
+    cd carbon-emission
     ```
 
 3. Install PHP dependencies using Composer.
@@ -35,4 +35,7 @@ Welcome to Carbon Emission Calculation! This README will guide you through setti
     php artisan key:generate
     ```
 
-6. Run `php artisan serve`
+6. Run
+    ```bash
+    php artisan serve
+    ```
