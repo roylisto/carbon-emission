@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
-use PHPUnit\Framework\Attributes\Depends;
 use PHPUnit\Framework\Attributes\DependsExternal;
 use Tests\TestCase;
 use Tests\Traits\AuthTrait;
@@ -41,18 +40,45 @@ class FlightTest extends TestCase
             'Accept' => 'application/json'
         ])->postJson('api/flight', $payload);
 
-        $this->checkResponseFormat($responseSquake);
+        $this->checkResponseSuccessFormat($responseSquake);
 
         $responseDB = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->token,
             'Accept' => 'application/json'
         ])->postJson('api/flight', $payload);
 
-        $this->checkResponseFormat($responseDB);
+        $this->checkResponseSuccessFormat($responseDB);
         $this->assertJsonStringEqualsJsonString(json_encode($responseSquake->json()), json_encode($responseDB->json()));
     }
 
-    private function checkResponseFormat($response)
+    #[DependsExternal(AuthTest::class, 'test_login')]
+    public function test_search_flight_failed(): void
+    {
+        $this->token = $this->getToken();
+        $payload = [
+            [
+                "origin" => "CG"
+            ]
+        ];
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $this->token,
+            'Accept' => 'application/json'
+        ])->postJson('api/flight', $payload);
+
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonStructure([
+                'success',
+                'message',
+                'error'
+            ])
+            ->assertJson([
+                'success' => false,
+                'message' => 'Validation Error'
+            ]);
+    }
+
+    private function checkResponseSuccessFormat($response)
     {
         $response->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure([
