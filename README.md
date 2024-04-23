@@ -1,6 +1,6 @@
-**Carbon Emission Calculation**
+**Carbon Emission Calculator**
 
-Welcome to Carbon Emission Calculation! This README will guide you through setting up the project.
+Welcome to the Carbon Emission Calculator! This guide will assist you in setting up the project.
 
 ### Prerequisites
 
@@ -27,19 +27,70 @@ Welcome to Carbon Emission Calculation! This README will guide you through setti
     composer install
     ```
 
-4. Copy `.env.example` to `.env` and configure the database and squake settings
+4. Copy `.env.example` to `.env` and configure the `database` and `squake` settings.
 
-5. Generate Laravel application key.
+5. Generate the Laravel application key.
 
     ```bash
     php artisan key:generate
     ```
 
-6. Run
+6. Run the server.
+
     ```bash
     php artisan serve
     ```
 
+### Running Integration Test
+
+Run the following command:
+
+```bash
+php artisan test
+```
+
 ### Postman
 
 [Download Postman Collection](./emission.postman_collection.json)
+
+### How to Use it
+
+1. Register a user by sending a POST request to `/api/register` endpoint, with an example payload:
+
+    ```json
+    {
+        "name": "test",
+        "email": "test@test.com",
+        "password": "123456",
+        "c_password": "123456"
+    }
+    ```
+
+2. Login using email and password via the `/api/login` endpoint, with an example payload:
+
+    ```json
+    {
+        "email": "test@test.com",
+        "password": "123456"
+    }
+    ```
+
+3. Use the token received from the login response as a `Bearer` token in the `Authorization` header to access Flight, Train, and Hotel endpoints. For example:
+
+    ```bash
+    curl --location 'http://localhost:8000/api/flight' \
+    --header 'Accept: application/json' \
+    --header 'Authorization: Bearer YOUR_TOKEN_HERE' \
+    --header 'Content-Type: application/json' \
+    --data '[
+        {
+            "origin": "CGK",
+            "destination": "PLM",
+            "external_reference": "test",
+            "number_of_travelers": 1,
+            "methodology": "ICAO"
+        }
+    ]'
+    ```
+
+4. For more examples, refer to the Postman collection.
