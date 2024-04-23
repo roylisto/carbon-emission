@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Services\Squake;
 use App\Traits\TravelEmissionCalculationTrait;
 
-class TrainRouteController extends Controller
+class TrainRouteController extends BaseController
 {
     use TravelEmissionCalculationTrait;
 
@@ -32,11 +32,11 @@ class TrainRouteController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return $this->sendError('Validation Error', $validator->errors(), 422);
         }
 
         $outputResponse = $this->calculateEmission($input, 'App\Models\TrainRoute');
 
-        return new ResponseResource(true, 'Train Emission Calculation', $outputResponse);
+        return $outputResponse;
     }
 }
