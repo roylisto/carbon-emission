@@ -35,7 +35,13 @@ Welcome to the Carbon Emission Calculator! This guide will assist you in setting
     php artisan key:generate
     ```
 
-6. Run the server.
+6. Run database migration
+
+    ```bash
+    php artisan migrate
+    ```
+
+7. Run the server.
 
     ```bash
     php artisan serve
