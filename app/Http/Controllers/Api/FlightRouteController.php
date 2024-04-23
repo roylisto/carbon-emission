@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Resources\ResponseResource;
 use App\Services\Squake;
 use App\Traits\TravelEmissionCalculationTrait;
 
-class FlightRouteController extends Controller
+class FlightRouteController extends BaseController
 {
     use TravelEmissionCalculationTrait;
 
@@ -31,11 +29,11 @@ class FlightRouteController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return $this->sendError('Validation Error', $validator->errors(), 422);
         }
 
         $outputResponse = $this->calculateEmission($input, 'App\Models\FlightRoute');
 
-        return new ResponseResource(true, 'Flight Emission Calculation', $outputResponse);
+        return $outputResponse;
     }
 }

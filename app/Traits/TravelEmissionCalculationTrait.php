@@ -50,7 +50,7 @@ trait TravelEmissionCalculationTrait
             ]);
 
             if (isset($squakeResponse['errors'])) {
-                return new ResponseResource(false, 'Emission Calculation', $squakeResponse['errors']);
+                return $this->sendError('Squake Error', $squakeResponse['errors']);
             }
 
             try {
@@ -85,7 +85,7 @@ trait TravelEmissionCalculationTrait
                 DB::commit();
             } catch (\Exception $e) {
                 DB::rollBack();
-                return new ResponseResource(false, 'Emission Calculation', $e->getMessage());
+                return $this->sendError('Save Emission', $e->getMessage());
             }
         }
 
