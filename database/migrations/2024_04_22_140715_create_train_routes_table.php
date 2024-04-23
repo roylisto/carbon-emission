@@ -18,10 +18,9 @@ return new class extends Migration
             $table->string('destination');
             $table->string('train_type');
             $table->unsignedBigInteger('emission_id');
-
-            $table->foreign('emission_id')->references('id')->on('emissions')->onDelete('cascade');
             $table->timestamps();
 
+            $table->foreign('emission_id')->references('id')->on('emissions')->onDelete('cascade');
             $table->unique(['methodology', 'origin', 'destination', 'train_type']);
         });
     }

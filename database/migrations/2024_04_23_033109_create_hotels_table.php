@@ -11,16 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('flight_routes', function (Blueprint $table) {
+        Schema::create('hotels', function (Blueprint $table) {
             $table->id();
-            $table->string('methodology', 20)->nullable();
-            $table->string('origin', 3);
-            $table->string('destination', 3);
+            $table->string('methodology', 20);
+            $table->string('country')->nullable();
+            $table->unsignedInteger('stars')->nullable();
+            $table->boolean('hcmi_member')->default(false);
+            $table->string('room_type')->nullable();
             $table->unsignedBigInteger('emission_id');
             $table->timestamps();
 
             $table->foreign('emission_id')->references('id')->on('emissions')->onDelete('cascade');
-            $table->unique(['methodology', 'origin', 'destination']);
+            $table->unique(['methodology', 'country', 'stars', 'hcmi_member', 'room_type']);
         });
     }
 
@@ -29,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('flight_routes');
+        Schema::dropIfExists('hotels');
     }
 };
