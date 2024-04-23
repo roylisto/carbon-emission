@@ -1,6 +1,7 @@
 **Carbon Emission Calculator**
 
 Welcome to the Carbon Emission Calculator! This guide will assist you in setting up the project.
+To see the system design of this project please refer to [System Design](https://docs.google.com/document/d/1gRlurBHwjXJwUHPvo-N-MfguS7DkSUS-27PVdm621ow/edit?usp=sharing)
 
 ### Prerequisites
 
