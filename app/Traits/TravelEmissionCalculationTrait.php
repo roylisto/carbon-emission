@@ -16,15 +16,11 @@ trait TravelEmissionCalculationTrait
             '*.number_of_travelers' => 'required|integer|min:1',
         ];
 
-        $validationRules = array_merge($commonValidationRules, $additionalValidation);
-
         // Add methodology validation for train routes
         if ($routeModel === 'App\Models\TrainRoute') {
             $validationRules['*.methodology'] = 'required|string';
-            $defaultMethodology = 'BASIC';
-        } else {
-            $defaultMethodology = 'MYCLIMATE';
         }
+        $validationRules = array_merge($commonValidationRules, $additionalValidation);
 
         $dataToCheck = [];
         $totalCarbonQuantity = 0;
@@ -33,6 +29,12 @@ trait TravelEmissionCalculationTrait
         foreach ($input as $key => $item) {
             $item['type'] = $routeModel === 'App\Models\TrainRoute' ? 'train' : 'flight';
             $dataToCheck[$key] = $item;
+
+            if ($routeModel === 'App\Models\TrainRoute') {
+                $defaultMethodology = 'BASIC';
+            } else {
+                $defaultMethodology = 'MYCLIMATE';
+            }
 
             $methodology = $item['methodology'] ?? $defaultMethodology;
 
@@ -67,13 +69,22 @@ trait TravelEmissionCalculationTrait
                 DB::beginTransaction();
                 foreach ($squakeResponse['items'] as $key => $item) {
                     $check = $dataToCheck[$key];
+
                     $item['carbon_quantity'] = (int) ($item['carbon_quantity'] / $check['number_of_travelers']);
+
+                    if ($routeModel === 'App\Models\TrainRoute') {
+                        $defaultMethodology = 'BASIC';
+                    } else {
+                        $defaultMethodology = 'MYCLIMATE';
+                    }
+
+                    $item['methodology'] = $item['methodology'] ?? $defaultMethodology;
 
                     $emission = Emission::create($item);
                     $insertData = $routeModel::create([
                         'origin' => strtoupper($check['origin']),
                         'destination' => strtoupper($check['destination']),
-                        'methodology' => $methodology,
+                        'methodology' => strtoupper($item['methodology']),
                         'train_type' => $routeModel === 'App\Models\TrainRoute' ? strtoupper($check['train_type']) : null,
                         'emission_id' => $emission->id,
                     ])->load('emission');
