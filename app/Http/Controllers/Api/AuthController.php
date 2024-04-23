@@ -34,7 +34,7 @@ class AuthController extends BaseController
         $user = User::create($input);
         $token =  $user->createToken('auth_token')->plainTextToken;
 
-        return $this->sendResponse(["token" => $token], 'User register successfully.');
+        return $this->sendResponse(["token" => $token], 'User registered successfully');
     }
 
 
@@ -53,6 +53,6 @@ class AuthController extends BaseController
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        return $this->sendResponse(["token" => $token], 'User login successfully.');
+        return $this->sendResponse(["token" => $token], 'User login successfully');
     }
 }
