@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\API\BaseController;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -10,7 +11,7 @@ use App\Services\Squake;
 use Illuminate\Support\Facades\DB;
 use App\Models\Emission;
 
-class HotelController extends Controller
+class HotelController extends BaseController
 {
     protected $squake;
 
@@ -29,7 +30,7 @@ class HotelController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return $this->sendError('Validation Error', $validator->errors(), 422);
         }
 
         return $this->calculateEmission($input);
@@ -72,7 +73,7 @@ class HotelController extends Controller
             ]);
 
             if (isset($squakeResponse['errors'])) {
-                return new ResponseResource(false, 'Squake Error', $squakeResponse['errors']);
+                return $this->sendError('Squake Error', $squakeResponse['errors']);
             }
 
             try {
@@ -102,7 +103,7 @@ class HotelController extends Controller
                 DB::commit();
             } catch (\Exception $e) {
                 DB::rollBack();
-                return new ResponseResource(false, 'Hotel Emission Calculation DB Transaction', $e->getMessage());
+                return $this->sendError('Save Emission', $e->getMessage());
             }
         }
 
@@ -112,6 +113,6 @@ class HotelController extends Controller
             'items' => $outputItems
         ];
 
-        return new ResponseResource(true, 'Hotel Emission Calculation', $outputResponse);
+        return $this->sendResponse($outputResponse, 'Emission Calculation');
     }
 }

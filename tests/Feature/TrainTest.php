@@ -40,14 +40,14 @@ class TrainTest extends TestCase
             'Accept' => 'application/json'
         ])->postJson('api/train', $payload);
 
-        $this->checkResponseSuccessFormat($responseSquake);
+        $this->checkTravelResponseSuccessFormat($responseSquake);
 
         $responseDB = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->token,
             'Accept' => 'application/json'
         ])->postJson('api/train', $payload);
 
-        $this->checkResponseSuccessFormat($responseDB);
+        $this->checkTravelResponseSuccessFormat($responseDB);
         $this->assertJsonStringEqualsJsonString(json_encode($responseSquake->json()), json_encode($responseDB->json()));
     }
 
