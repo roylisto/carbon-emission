@@ -6,10 +6,6 @@ use App\Http\Controllers\Api\HotelController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
-
 Route::post('/flight', [FlightRouteController::class, 'calculate']);
 Route::post('/train', [TrainRouteController::class, 'calculate']);
 Route::post('/hotel', [HotelController::class, 'calculate']);
