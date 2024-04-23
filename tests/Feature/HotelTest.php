@@ -44,39 +44,37 @@ class HotelTest extends TestCase
 
         $this->checkHotelResponseSuccessFormat($responseSquake);
 
-        // $responseDB = $this->withHeaders([
-        //     'Authorization' => 'Bearer ' . $this->token,
-        //     'Accept' => 'application/json'
-        // ])->postJson('api/hotel', $payload);
+        $responseDB = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $this->token,
+            'Accept' => 'application/json'
+        ])->postJson('api/hotel', $payload);
 
-        // $this->checkResponseSuccessFormat($responseDB);
-        // $this->assertJsonStringEqualsJsonString(json_encode($responseSquake->json()), json_encode($responseDB->json()));
+        $this->checkHotelResponseSuccessFormat($responseDB);
+        $this->assertJsonStringEqualsJsonString(json_encode($responseSquake->json()), json_encode($responseDB->json()));
     }
 
-    // #[DependsExternal(AuthTest::class, 'test_login')]
-    // public function test_search_train_failed(): void
-    // {
-    //     $this->token = $this->getToken();
-    //     $payload = [
-    //         [
-    //             "origin" => "OR"
-    //         ]
-    //     ];
+    #[DependsExternal(AuthTest::class, 'test_login')]
+    public function test_search_hotel_failed(): void
+    {
+        $this->token = $this->getToken();
+        $payload = [
+            []
+        ];
 
-    //     $response = $this->withHeaders([
-    //         'Authorization' => 'Bearer ' . $this->token,
-    //         'Accept' => 'application/json'
-    //     ])->postJson('api/train', $payload);
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $this->token,
+            'Accept' => 'application/json'
+        ])->postJson('api/hotel', $payload);
 
-    //     $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
-    //         ->assertJsonStructure([
-    //             'success',
-    //             'message',
-    //             'error'
-    //         ])
-    //         ->assertJson([
-    //             'success' => false,
-    //             'message' => 'Validation Error'
-    //         ]);
-    // }
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonStructure([
+                'success',
+                'message',
+                'error'
+            ])
+            ->assertJson([
+                'success' => false,
+                'message' => 'Validation Error'
+            ]);
+    }
 }
