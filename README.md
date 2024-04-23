@@ -39,3 +39,7 @@ Welcome to Carbon Emission Calculation! This README will guide you through setti
     ```bash
     php artisan serve
     ```
+
+### Postman
+
+[Download Postman Collection](./emission.postman_collection.json)

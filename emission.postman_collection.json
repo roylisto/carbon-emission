@@ -1,0 +1,201 @@
+{
+	"info": {
+		"_postman_id": "7f958d2a-f634-4069-a2d1-f699a44889c7",
+		"name": "emission",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "13297969"
+	},
+	"item": [
+		{
+			"name": "http://localhost:8000/api/flight",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer 1|Z2IndcYm2uMZ22gj7aC5pthWTQLrM15mbDte8HIT5fbf2b02",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n    {\n        \"origin\": \"CGK\",\n        \"destination\": \"PLM\",\n        \"external_reference\": \"test\",        \n        \"number_of_travelers\": 1,\n        \"methodology\": \"ICAO\"\n    }\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/flight",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"flight"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8000/api/train",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "1|Z2IndcYm2uMZ22gj7aC5pthWTQLrM15mbDte8HIT5fbf2b02",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n    {      \n      \"origin\": \"ORY\",\n      \"destination\": \"NICE\",\n      \"number_of_travelers\": 1,\n      \"train_type\": \"high_speed\",    \n      \"methodology\": \"ADEME\"\n    },\n    {     \n      \"origin\": \"fra\",\n      \"destination\": \"ber\",\n      \"number_of_travelers\": 2,\n      \"train_type\": \"high_speed\",    \n      \"methodology\": \"ADEME\"\n    }\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/train",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"train"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8000/api/hotel",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "1|Z2IndcYm2uMZ22gj7aC5pthWTQLrM15mbDte8HIT5fbf2b02",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n    {\n        \"number_of_nights\": 1,\n        \"methodology\": \"BASIC\",\n        \"stars\": 4,\n        \"country\": \"AU\",\n        \"external_reference\": \"test_1\",\n        \"room_type\": \"adjacent_room\"       \n    },\n    {\n        \"number_of_nights\": 1,\n        \"methodology\": \"SQUAKE\",\n        \"stars\": 4,\n        \"country\": \"AU\",\n        \"external_reference\": \"test_1\",\n        \"room_type\": \"twin\"       \n    }\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/hotel",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"hotel"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8000/api/login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"test@test.com\",\n    \"password\": 123456\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8000/api/register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"test\",\n    \"email\": \"test6@test.com\",\n    \"password\": \"123456\",\n    \"c_password\": \"123456\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"register"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
