@@ -4,7 +4,6 @@ namespace App\Traits;
 
 use Illuminate\Support\Facades\DB;
 use App\Models\Emission;
-use App\Http\Resources\ResponseResource;
 
 trait TravelEmissionCalculationTrait
 {
@@ -89,10 +88,12 @@ trait TravelEmissionCalculationTrait
             }
         }
 
-        return [
+        $results = [
             'total_carbon_quantity' => $totalCarbonQuantity,
             'carbon_unit' => 'gram',
             'items' => $outputItems
         ];
+
+        return $this->sendResponse($results, 'Emission Calculation');
     }
 }

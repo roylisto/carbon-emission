@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Resources\ResponseResource;
 use App\Services\Squake;
 use App\Traits\TravelEmissionCalculationTrait;
 
