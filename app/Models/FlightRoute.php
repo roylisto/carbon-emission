@@ -26,12 +26,10 @@ class FlightRoute extends Model
      */
     public static function findBy($origin, $destination, $methodology)
     {
-        $query = self::where('origin', strtoupper($origin))
+        return self::where('origin', strtoupper($origin))
             ->where('destination', strtoupper($destination))
             ->where('methodology', strtoupper($methodology))
-            ->with('emission');
-
-        return $query->with('emission')->first();
+            ->with('emission')->first();
     }
 
     public function emission()

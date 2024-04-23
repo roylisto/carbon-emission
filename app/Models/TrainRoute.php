@@ -28,13 +28,11 @@ class TrainRoute extends Model
      */
     public static function findBy($origin, $destination, $methodology, $train_type)
     {
-        $query = self::where('origin', strtoupper($origin))
+        return self::where('origin', strtoupper($origin))
             ->where('destination', strtoupper($destination))
             ->where('methodology', strtoupper($methodology))
             ->where('train_type', strtoupper($train_type))
-            ->with('emission');
-
-        return $query->with('emission')->first();
+            ->with('emission')->first();
     }
 
     public function emission()
