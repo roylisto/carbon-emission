@@ -27,15 +27,27 @@ class Hotel extends Model
      * @param string $room_type
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public static function findBy($methdology, $country, $stars, $hcmi_member, $room_type)
+    public static function findBy($methodology, $country = null, $stars = null, $hcmi_member = null, $room_type = null)
     {
-        return self::where('methdology', strtoupper($methdology))
-            ->where('country', strtoupper($country))
-            ->where('stars', strtoupper($stars))
-            ->where('hcmi_member', strtoupper($hcmi_member))
-            ->where('room_type', strtoupper($room_type))
-            ->with('emission')->first();
+        return self::query()
+            ->where('methodology', strtoupper($methodology))
+            ->when($country, function ($query) use ($country) {
+                return $query->where('country', strtoupper($country));
+            })
+            ->when($stars !== null, function ($query) use ($stars) {
+                return $query->where('stars', $stars);
+            })
+            ->when($hcmi_member !== null, function ($query) use ($hcmi_member) {
+                return $query->where('hcmi_member', $hcmi_member);
+            })
+            ->when($room_type, function ($query) use ($room_type) {
+                return $query->where('room_type', strtoupper($room_type));
+            })
+            ->with('emission')
+            ->first();
     }
+
+
 
     public function emission()
     {

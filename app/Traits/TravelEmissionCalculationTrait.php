@@ -8,20 +8,8 @@ use App\Http\Resources\ResponseResource;
 
 trait TravelEmissionCalculationTrait
 {
-    protected function calculateEmission($input, $routeModel, $additionalValidation = [])
+    protected function calculateEmission($input, $routeModel)
     {
-        $commonValidationRules = [
-            '*.origin' => 'required|string',
-            '*.destination' => 'required|string',
-            '*.number_of_travelers' => 'required|integer|min:1',
-        ];
-
-        // Add methodology validation for train routes
-        if ($routeModel === 'App\Models\TrainRoute') {
-            $validationRules['*.methodology'] = 'required|string';
-        }
-        $validationRules = array_merge($commonValidationRules, $additionalValidation);
-
         $dataToCheck = [];
         $totalCarbonQuantity = 0;
         $outputItems = [];

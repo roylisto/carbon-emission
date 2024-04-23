@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('carbon_unit');
             $table->string('type');
             $table->string('methodology');
-            $table->float('distance');
-            $table->string('distance_unit');
+            $table->float('distance')->nullable();
+            $table->string('distance_unit')->nullable();
             $table->timestamps();
         });
     }
