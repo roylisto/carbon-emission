@@ -1,6 +1,6 @@
 **Carbon Emission Calculation**
 
-Welcome to Carbon Emission Calculation! This README will guide you through setting up the project either via Docker for a quick start or manually by installing dependencies.
+Welcome to Carbon Emission Calculation! This README will guide you through setting up the project.
 
 ### Prerequisites
 
